@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Eye, Trash2, Copy } from "lucide-react";
+import { Eye, Trash2, Users, Building2 } from "lucide-react";
+import { Tables } from "@/integrations/supabase/types";
 
 const ExamList = () => {
   const navigate = useNavigate();
-  const [exams, setExams] = useState<any[]>([]);
+  const [exams, setExams] = useState<Tables<"exams">[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const ExamList = () => {
 
       if (error) throw error;
       setExams(data || []);
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Failed to fetch exams");
     } finally {
       setLoading(false);
@@ -50,16 +51,12 @@ const ExamList = () => {
       if (error) throw error;
       toast.success("Exam and all related data deleted successfully");
       fetchExams();
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Failed to delete exam");
     }
   };
 
-  const handleCopyLink = (examCode: string) => {
-    const link = `${window.location.origin}/student?code=${examCode}`;
-    navigator.clipboard.writeText(link);
-    toast.success("Exam link copied to clipboard");
-  };
+
 
   if (loading) {
     return (
@@ -78,47 +75,67 @@ const ExamList = () => {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-semibold mb-4">Your Exams</h2>
-      {exams.map((exam) => (
-        <Card key={exam.id} className="p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <h3 className="text-xl font-semibold mb-2">{exam.exam_name}</h3>
-              <div className="flex gap-4 text-sm text-muted-foreground">
-                <span>Code: {exam.exam_code}</span>
-                <span>Students: {exam.total_students}</span>
-                <span>Halls: {exam.number_of_halls}</span>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold tracking-tight">Your Exams</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {exams.map((exam) => (
+          <Card key={exam.id} className="group hover:shadow-lg transition-all duration-300 border-border/50 bg-card/50 backdrop-blur-sm">
+            <div className="p-6 space-y-4">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-xl font-bold line-clamp-1" title={exam.exam_name}>
+                    {exam.exam_name}
+                  </h3>
+                  <p className="text-sm font-medium text-primary mt-1">
+                    {exam.exam_code}
+                  </p>
+                </div>
+                <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    onClick={() => navigate(`/admin/edit/${exam.id}`)}
+                    title="Edit Exam"
+                  >
+                    <span className="text-sm">✏️</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                    onClick={() => handleDelete(exam.id)}
+                    title="Delete Exam"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 py-2">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 p-2 rounded-md">
+                  <Users className="h-4 w-4 text-primary" />
+                  <span>{exam.total_students} Students</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 p-2 rounded-md">
+                  <Building2 className="h-4 w-4 text-primary" />
+                  <span>{exam.number_of_halls} Halls</span>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Button
+                  className="w-full group-hover:bg-primary/90 transition-colors"
+                  onClick={() => navigate(`/exam/${exam.exam_code}`)}
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  View Details
+                </Button>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate(`/exam/${exam.exam_code}`)}
-              >
-                <Eye className="mr-2 h-4 w-4" />
-                View
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCopyLink(exam.exam_code)}
-              >
-                <Copy className="mr-2 h-4 w-4" />
-                Copy Link
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => handleDelete(exam.id)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </Card>
-      ))}
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

@@ -2,97 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
+    /* Instagram Light Mode Palette */
     --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --foreground: 0 0% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 0 0% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 0 0% 15%;
 
-    --primary: 45 93% 47%;
-    --primary-foreground: 240 10% 3.9%;
+    /* Vibrant Yellow (User Preference) replacing IG Blue */
+    --primary: 48 100% 50%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 48 100% 96%;
-    --secondary-foreground: 240 10% 3.9%;
+    --secondary: 0 0% 98%;
+    --secondary-foreground: 0 0% 15%;
 
-    --muted: 48 100% 96%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 45 93% 47%;
-    --accent-foreground: 240 10% 3.9%;
+    --accent: 0 0% 98%;
+    --accent-foreground: 0 0% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 45 20% 90%;
-    --input: 45 20% 90%;
-    --ring: 45 93% 47%;
+    --border: 0 0% 86%;
+    --input: 0 0% 96%;
+    --ring: 48 100% 50%;
 
     --radius: 0.5rem;
-
-    --gradient-primary: linear-gradient(135deg, hsl(45 93% 47%), hsl(48 96% 60%));
-    --shadow-card: 0 4px 6px -1px hsl(45 93% 47% / 0.1), 0 2px 4px -1px hsl(45 93% 47% / 0.06);
-    --shadow-elevated: 0 10px 15px -3px hsl(45 93% 47% / 0.1), 0 4px 6px -2px hsl(45 93% 47% / 0.05);
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    /* Custom Dark Theme Palette */
+    --background: 270 8% 10%;
     --foreground: 0 0% 98%;
 
-    --card: 240 8% 8%;
+    --card: 220 4% 15%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 8% 8%;
+    --popover: 220 4% 15%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 45 93% 47%;
-    --primary-foreground: 240 10% 3.9%;
+    --primary: 43 72% 48%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 240 8% 14%;
+    --secondary: 220 4% 15%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 8% 14%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 270 8% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 45 93% 47%;
-    --accent-foreground: 240 10% 3.9%;
+    --accent: 220 4% 20%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 345 100% 18%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 6% 20%;
-    --input: 240 6% 20%;
-    --ring: 45 93% 47%;
-
-    --gradient-primary: linear-gradient(135deg, hsl(45 93% 47%), hsl(48 96% 60%));
-    --shadow-card: 0 4px 6px -1px hsl(45 93% 47% / 0.2), 0 2px 4px -1px hsl(45 93% 47% / 0.1);
-    --shadow-elevated: 0 10px 15px -3px hsl(45 93% 47% / 0.2), 0 4px 6px -2px hsl(45 93% 47% / 0.1);
-
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 220 4% 25%;
+    --input: 220 4% 15%;
+    --ring: 43 72% 48%;
   }
 }
 
@@ -102,6 +75,25 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+}
+
+@layer components {
+
+  /* Instagram-style input fields */
+  .input-field {
+    @apply bg-secondary border border-border rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all placeholder:text-muted-foreground;
+  }
+
+  /* Instagram-style buttons */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground font-semibold rounded-lg py-2 px-4 hover:bg-primary/90 active:opacity-70 transition-opacity;
+  }
+
+  /* Card style - Flat with border, no shadow */
+  .ig-card {
+    @apply bg-card border border-border rounded-lg overflow-hidden;
   }
 }

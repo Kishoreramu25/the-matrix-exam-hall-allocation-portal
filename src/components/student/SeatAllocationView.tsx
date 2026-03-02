@@ -2,20 +2,21 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, User, Hash, Grid, Building, ExternalLink } from "lucide-react";
 import { useState } from "react";
+import { Tables } from "@/integrations/supabase/types";
 
-interface SeatAllocationViewProps {
+export interface SeatAllocationViewProps {
   allocation: {
-    exam: any;
-    student: any;
-    hall: any;
-    allSeats: any[];
+    exam: Tables<"exams">;
+    student: Tables<"seat_allocations">;
+    hall: Tables<"halls">;
+    allSeats: Tables<"seat_allocations">[];
   };
   onReset: () => void;
 }
 
 const SeatAllocationView = ({ allocation, onReset }: SeatAllocationViewProps) => {
   const { exam, student, hall, allSeats } = allocation;
-  const [selectedSeat, setSelectedSeat] = useState<any>(null);
+  const [selectedSeat, setSelectedSeat] = useState<Tables<"seat_allocations"> | null>(null);
 
   const rows = exam.bench_rows || Math.ceil(hall.capacity / 10);
   const cols = exam.bench_columns || 10;
@@ -24,10 +25,6 @@ const SeatAllocationView = ({ allocation, onReset }: SeatAllocationViewProps) =>
     return allSeats.find(
       (s) => s.row_number === row && s.column_number === col
     );
-  };
-
-  const handlePrint = () => {
-    window.print();
   };
 
   return (
@@ -39,7 +36,6 @@ const SeatAllocationView = ({ allocation, onReset }: SeatAllocationViewProps) =>
             <p className="text-muted-foreground">Exam Code: {exam.exam_code}</p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={handlePrint}>Print Hall Ticket</Button>
             <Button variant="outline" onClick={onReset}>
               Search Again
             </Button>
@@ -111,7 +107,7 @@ const SeatAllocationView = ({ allocation, onReset }: SeatAllocationViewProps) =>
             </p>
           )}
         </div>
-      </Card>
+      </Card >
 
       <Card className="p-6">
         <h2 className="text-xl font-semibold mb-4">Hall Seating Layout</h2>
@@ -134,13 +130,12 @@ const SeatAllocationView = ({ allocation, onReset }: SeatAllocationViewProps) =>
                     <button
                       key={colIndex}
                       onClick={() => seat && setSelectedSeat(seat)}
-                      className={`flex-1 min-w-[50px] h-12 flex flex-col items-center justify-center text-xs font-medium rounded border transition-all ${
-                        seat
-                          ? isUserSeat
-                            ? "bg-primary text-primary-foreground border-primary shadow-lg scale-110 cursor-default"
-                            : "bg-card hover:bg-muted border-border cursor-pointer hover:scale-105"
-                          : "bg-muted/30 border-dashed border-muted-foreground/20 cursor-default"
-                      }`}
+                      className={`flex-1 min-w-[50px] h-12 flex flex-col items-center justify-center text-xs font-medium rounded border transition-all ${seat
+                        ? isUserSeat
+                          ? "bg-primary text-primary-foreground border-primary shadow-lg scale-110 cursor-default"
+                          : "bg-card hover:bg-muted border-border cursor-pointer hover:scale-105"
+                        : "bg-muted/30 border-dashed border-muted-foreground/20 cursor-default"
+                        }`}
                       title={seat ? `Click to view details` : "Empty"}
                       disabled={!seat}
                     >
@@ -189,7 +184,7 @@ const SeatAllocationView = ({ allocation, onReset }: SeatAllocationViewProps) =>
           </div>
         </div>
       </Card>
-    </div>
+    </div >
   );
 };
 

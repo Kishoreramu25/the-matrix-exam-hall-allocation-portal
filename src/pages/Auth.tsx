@@ -9,15 +9,10 @@ import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 import { z } from "zod";
 
-const signupSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be at most 20 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  fullName: z.string().min(2, "Name must be at least 2 characters"),
-});
+
 
 const loginSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -26,10 +21,8 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
-    fullName: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,68 +34,31 @@ const Auth = () => {
         // Validate login data
         const validatedData = loginSchema.parse(formData);
 
-        // Look up email by username
-        const { data: profile, error: lookupError } = await supabase
-          .from("profiles")
-          .select("email")
-          .eq("username", validatedData.username)
-          .single();
-
-        if (lookupError || !profile) {
-          throw new Error("Invalid username or password");
-        }
-
         // Sign in with email
         const { error } = await supabase.auth.signInWithPassword({
-          email: profile.email,
+          email: validatedData.email,
           password: validatedData.password,
         });
 
         if (error) throw error;
         toast.success("Logged in successfully");
         navigate("/admin");
-      } else {
-        // Validate signup data
-        const validatedData = signupSchema.parse(formData);
-
-        // Check if username already exists
-        const { data: existingUser } = await supabase
-          .from("profiles")
-          .select("username")
-          .eq("username", validatedData.username)
-          .single();
-
-        if (existingUser) {
-          throw new Error("Username already taken");
-        }
-
-        // Sign up with email
-        const { error } = await supabase.auth.signUp({
-          email: validatedData.email,
-          password: validatedData.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/admin`,
-            data: {
-              username: validatedData.username,
-              full_name: validatedData.fullName,
-              role: "admin",
-            },
-          },
-        });
-
-        if (error) throw error;
-        toast.success("Account created successfully");
-        navigate("/admin");
       }
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
       } else {
-        toast.error(error.message || "An error occurred");
+        const message = error instanceof Error ? error.message : "An error occurred";
+        toast.error(message);
       }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePremiumClick = () => {
+    const message = encodeURIComponent("Hey i whould like to continue the premium plan could you please share the details");
+    window.open(`https://wa.me/919042427828?text=${message}`, "_blank");
   };
 
   return (
@@ -119,87 +75,82 @@ const Auth = () => {
 
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            {isLogin ? "Admin Login" : "Admin Signup"}
+            {isLogin ? "Admin Login" : "Premium Plan"}
           </h1>
           <p className="text-muted-foreground">
-            {isLogin ? "Sign in to manage exams" : "Create an admin account"}
+            {isLogin ? "Sign in to manage exams" : "Unlock exclusive features"}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="username">Username</Label>
-            <Input
-              id="username"
-              type="text"
-              placeholder="johndoe"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              required
-            />
+        {isLogin ? (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="admin@college.edu"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Loading..." : "Login"}
+            </Button>
+          </form>
+        ) : (
+          <div className="space-y-6 text-center">
+            <div className="p-6 bg-primary/5 rounded-lg border border-primary/10">
+              <h3 className="text-2xl font-bold text-primary mb-2">$50 / month</h3>
+              <p className="text-muted-foreground mb-4">
+                Get unlimited access to exam management, seat allocation, and advanced reporting features.
+              </p>
+              <ul className="text-sm text-left space-y-2 mb-6 text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> Unlimited Exams
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> Smart Seat Allocation
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> Priority Support
+                </li>
+              </ul>
+              <Button
+                onClick={handlePremiumClick}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                size="lg"
+              >
+                CONTINUE WITH PREMIUM
+              </Button>
+            </div>
           </div>
-
-          {!isLogin && (
-            <>
-              <div>
-                <Label htmlFor="fullName">Full Name</Label>
-                <Input
-                  id="fullName"
-                  type="text"
-                  placeholder="John Doe"
-                  value={formData.fullName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, fullName: e.target.value })
-                  }
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="admin@college.edu"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  required
-                />
-              </div>
-            </>
-          )}
-
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              required
-            />
-          </div>
-
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Loading..." : isLogin ? "Login" : "Sign Up"}
-          </Button>
-        </form>
+        )}
 
         <div className="mt-6 text-center">
           <button
             onClick={() => setIsLogin(!isLogin)}
             className="text-sm text-primary hover:underline"
           >
-            {isLogin
-              ? "Don't have an account? Sign up"
-              : "Already have an account? Login"}
+            {isLogin ? "Don't have an account? Get Premium" : "Already have an account? Login"}
           </button>
         </div>
       </Card>
