@@ -14,6 +14,7 @@ import Student from "./pages/Student";
 import ExamView from "./pages/ExamView";
 import Settings from "./pages/Settings";
 import Feedback from "./pages/Feedback";
+import MatrixAI from "./pages/MatrixAI";
 import NotFound from "./pages/NotFound";
 
 import MobileNav from "./components/MobileNav";
@@ -56,6 +57,7 @@ const App = () => {
                 <Route path="/exam/:examCode" element={<ExamView />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/feedback" element={<Feedback />} />
+                <Route path="/matrix-ai" element={<MatrixAI />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -17,6 +17,7 @@ export const translations = {
         "student.desc": "Find your seat instantly",
         "student.find": "Find My Seat",
         "student.result": "Know My Recent Exam Result",
+        "student.matrix_ai": "Start recalling with Matrix AI",
 
         // Student
         "find.seat": "Find Your Seat",
@@ -85,6 +86,7 @@ export const translations = {
         "student.desc": "உங்கள் இருக்கையை உடனடியாக கண்டறியவும்",
         "student.find": "என் இருக்கையை கண்டுபிடி",
         "student.result": "எனது சமீபத்திய தேர்வு முடிவை அறிந்துகொள்ளவும்",
+        "student.matrix_ai": "மேட்ரிக்ஸ் AI உடன் நினைவுகூரத் தொடங்குங்கள்",
 
         // Student
         "find.seat": "உங்கள் இருக்கையை கண்டுபிடி",
@@ -153,6 +155,7 @@ export const translations = {
         "student.desc": "अपनी सीट तुरंत खोजें",
         "student.find": "मेरी सीट खोजें",
         "student.result": "मेरा हालिया परीक्षा परिणाम जानें",
+        "student.matrix_ai": "मैट्रिक्स AI के साथ याद करना शुरू करें",
 
         // Student
         "find.seat": "अपनी सीट खोजें",

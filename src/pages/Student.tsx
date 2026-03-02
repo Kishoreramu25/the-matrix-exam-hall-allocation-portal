@@ -245,6 +245,26 @@ const Student = () => {
               >
                 {t("student.result")}
               </Button>
+
+              <div className="relative py-4">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">
+                    Or
+                  </span>
+                </div>
+              </div>
+
+              <Button
+                type="button"
+                className="w-full bg-gradient-to-r from-primary to-purple-600 hover:opacity-90 transition-all duration-300"
+                onClick={() => navigate("/matrix-ai")}
+              >
+                <span className="mr-2">✨</span>
+                {t("student.matrix_ai")}
+              </Button>
             </form>
           </Card>
         ) : (
